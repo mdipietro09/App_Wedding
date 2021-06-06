@@ -27,4 +27,5 @@ about = "Load your guest list or try random simulation"
 2. use bootstrap within dash
 3. change inputs based on events
 4. upload and download files
+5. multiple outputs
 '''

@@ -15,9 +15,6 @@ from python.plot import Plot
 from settings import config
 
 
-# Data
-dtf = random_data()
-
 # App Instance
 app = dash.Dash(name=config.app_name, assets_folder="static", external_stylesheets=[dbc.themes.LUX, config.fontawesome])
 app.title = config.app_name
@@ -49,17 +46,14 @@ navbar = dbc.Nav(className="nav nav-pills", children=[
 
 
 # Callbacks
-@app.callback(output=Output("about","is_open"), inputs=[Input("about-popover","n_clicks")], state=[State("about","is_open")])
-def about_popover(n, is_open):
+@app.callback(output=[Output(component_id="about", component_property="is_open"), 
+                      Output(component_id="about-popover", component_property="active")], 
+              inputs=[Input(component_id="about-popover", component_property="n_clicks")], 
+              state=[State("about","is_open"), State("about-popover","active")])
+def about_popover(n, is_open, active):
     if n:
-        return not is_open
-    return is_open
-
-@app.callback(output=Output("about-popover","active"), inputs=[Input("about-popover","n_clicks")], state=[State("about-popover","active")])
-def about_active(n, active):
-    if n:
-        return not active
-    return active
+        return not is_open, active
+    return is_open, active
 
 
 
@@ -90,6 +84,7 @@ inputs = dbc.FormGroup([
     dcc.Upload(id='load-excel', children=html.Div(['Drag and Drop or ', html.A('Select Files')]),
                style={'width':'100%', 'height':'60px', 'lineHeight':'60px', 'borderWidth':'1px', 'borderStyle':'dashed',
                       'borderRadius':'5px', 'textAlign':'center', 'margin':'10px'} ),
+    html.Div(id='excel-name', style={"marginLeft":"20px"}),
 
     html.Br(),html.Br(),
     dbc.Col(dbc.Button("run", id="run", color="primary"))
@@ -105,28 +100,33 @@ body = dbc.Row([
         ]),
         ### plot
         dbc.Col(md=9, children=[
+            html.H6(id="title"),
             dcc.Graph(id="plot")
         ])
 ])
 
 
 # Callbacks
-@app.callback(output=Output(component_id="hide-seek", component_property="style"), 
-              inputs=[Input(component_id="load-excel", component_property="contents")])
-def hide_stuff(contents):
-    return {'display':'block'} if contents is None else {'display':'none'}
+@app.callback(output=[Output(component_id="hide-seek", component_property="style"),
+                      Output(component_id="excel-name", component_property="children")], 
+              inputs=[Input(component_id="load-excel", component_property="filename")])
+def upload_event(filename):
+    div = "" if filename is None else "Use file "+filename
+    return {'display':'block'} if filename is None else {'display':'none'}, div
 
-@app.callback(output=Output(component_id="plot", component_property="figure"), 
+@app.callback(output=[Output(component_id="title", component_property="children"),
+                      Output(component_id="plot", component_property="figure")], 
               inputs=[Input(component_id="run", component_property="n_clicks")],
               state=[State("n-guests","value"), State("n-iter","value"), State("max-capacity","value"), State("n-rules","value"), 
                      State("load-excel","contents"), State("load-excel","filename")])
-def plot_tables(n_clicks, n_guests, n_iter, max_capacity, n_rules, contents, filename):
+def results(n_clicks, n_guests, n_iter, max_capacity, n_rules, contents, filename):
     if contents is not None:
         dtf = load_file(contents, filename)
     else:
         dtf = random_data(n=n_guests, n_rules=n_rules)
     dtf = Model(dtf, float(max_capacity), int(n_iter)).run()
-    return Plot(dtf).plot(max_capacity, filename)
+    out = Plot(dtf)
+    return out.print_title(max_capacity, filename), out.plot()
 
 
 

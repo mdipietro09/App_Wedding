@@ -30,21 +30,18 @@ class Plot():
         return dtf_out.reset_index(drop=True).sort_values("table")
 
 
-    @staticmethod
-    def print_title(dtf, max_capacity, filename=None):
-        guests = str(int(len(dtf)))
-        tables = str(int(len(dtf["table"].unique())))
+    def print_title(self, max_capacity, filename=None):
+        guests = str(int(len(self.dtf)))
+        tables = str(int(len(self.dtf["table"].unique())))
         process = "Random Simulation" if filename is None else "Data from "+filename
         max_capacity = str(int(max_capacity))
-        return process+" :    "+guests+" guests    |    "+tables+ " tables calculated with max "+max_capacity+" people per table"
+        return process+" : "+guests+" guests --> "+tables+ " tables calculated with max "+max_capacity+" people per table"
 
 
-    def plot(self, max_capacity, filename=None):
-        title = self.print_title(self.dtf, max_capacity, filename)
-
+    def plot(self):
         fig = px.scatter(self.dtf, x="x", y="y", color="category", hover_name="name", facet_col="table", facet_col_wrap=3,
                          hover_data={"x":False, "y":False, "category":True, "avoid":True, "size":False, "table":False},
-                         title=title, size="size")
+                         size="size")
 
         fig.add_shape(type="circle", opacity=0.1, fillcolor="black", col="all", row="all", exclude_empty_subplots=True,
                       x0=self.dtf["x"].min(), y0=self.dtf["y"].min(), x1=self.dtf["x"].max(), y1=self.dtf["y"].max())
