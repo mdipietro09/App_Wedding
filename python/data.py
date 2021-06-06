@@ -42,7 +42,7 @@ When a file is uploaded it contains "contents", "filename", "date"
 :return
     pandas table
 '''
-def load_file(contents, filename):
+def upload_file(contents, filename):
     content_type, content_string = contents.split(',')
     decoded = base64.b64decode(content_string)
     try:
@@ -53,6 +53,26 @@ def load_file(contents, filename):
     except Exception as e:
         print("ERROR:", e)
         return 'There was an error processing this file.'
+
+
+'''
+Write excel
+:parameter
+    :param dtf: pandas table
+:return
+    link
+'''
+def download_file(dtf):
+    xlsx_io = io.BytesIO()
+    writer = pd.ExcelWriter(xlsx_io)
+    dtf.to_excel(writer, index=False)
+    writer.save()
+    xlsx_io.seek(0)
+    media_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    data = base64.b64encode(xlsx_io.read()).decode("utf-8")
+    link = f'data:{media_type};base64,{data}'
+    return link 
+    
 
 
 
