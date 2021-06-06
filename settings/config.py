@@ -20,3 +20,11 @@ about = "Load your guest list or try random simulation"
 
 ## fs
 #root = os.path.dirname(os.path.dirname(__file__)) + "/"
+
+
+'''
+1. draw with plotly
+2. use bootstrap within dash
+3. change inputs based on events
+4. upload and download files
+'''
