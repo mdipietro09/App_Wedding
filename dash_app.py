@@ -102,12 +102,14 @@ body = dbc.Row([
         ]),
         ## output
         dbc.Col(md=9, children=[
-            ### title
-            html.H6(id="title"),
-            ### download
-            dbc.Badge(html.A('Download', id='download-excel', download="tables.xlsx", href="", target="_blank"), color="success", pill=True),
-            ### plot
-            dcc.Graph(id="plot")
+            dbc.Spinner([
+                ### title
+                html.H6(id="title"),
+                ### download
+                dbc.Badge(html.A('Download', id='download-excel', download="tables.xlsx", href="", target="_blank"), color="success", pill=True),
+                ### plot
+                dcc.Graph(id="plot")
+            ], color="primary", type="grow"), 
         ])
 ])
 
