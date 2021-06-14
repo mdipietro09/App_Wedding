@@ -14,7 +14,8 @@ port = int(os.environ.get("PORT", 5000))
 app_name = "Wedding Planner"
 contacts = "https://www.linkedin.com/in/mauro-di-pietro-56a1366b/"
 code = "https://github.com/mdipietro09/App_Wedding"
-fontawesome = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'
+tutorial = "https://towardsdatascience.com/web-development-with-python-dash-complete-tutorial-6716186e09b3"
+fontawesome = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
 
 about = "Load your guest list or try random simulation"
 
